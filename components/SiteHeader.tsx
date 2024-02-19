@@ -1,8 +1,20 @@
 import { ModeToggle } from "@/components/ModeToggle"
+import { Button } from "@/components/ui/button"
+import {
+  LoginLink,
+  LogoutLink,
+  RegisterLink,
+} from "@kinde-oss/kinde-auth-nextjs/components"
+import { getKindeServerSession } from "@kinde-oss/kinde-auth-nextjs/server"
 import Link from "next/link"
-import { Button } from "./ui/button"
 
-const SiteHeader = () => {
+const SiteHeader = async () => {
+  const { isAuthenticated, getUser } = getKindeServerSession()
+
+  // const user = getUser()
+
+  // console.log(user)
+
   return (
     <nav className="flex h-[10vh] items-center border-b bg-background">
       <div className="container flex items-center justify-between">
@@ -13,10 +25,23 @@ const SiteHeader = () => {
         <div className="flex items-center gap-x-5">
           <ModeToggle />
 
-          <div className="flex items-center gap-x-5">
-            <Button>Sign In</Button>
-            <Button variant={"secondary"}>Sign Up</Button>
-          </div>
+          {(await isAuthenticated()) ? (
+            <div>
+              <LogoutLink>
+                <Button>Log out</Button>
+              </LogoutLink>
+            </div>
+          ) : (
+            <div className="flex items-center gap-x-5">
+              <LoginLink>
+                <Button>Sign In</Button>
+              </LoginLink>
+
+              <RegisterLink>
+                <Button variant={"secondary"}>Sign Up</Button>
+              </RegisterLink>
+            </div>
+          )}
         </div>
       </div>
     </nav>
